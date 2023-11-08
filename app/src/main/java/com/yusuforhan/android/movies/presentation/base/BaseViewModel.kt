@@ -41,7 +41,7 @@ abstract class BaseViewModel<STATE : State, EFFECT : Effect, EVENT : Event> : Vi
     init {
         subscribeToEvent()
     }
-
+    fun getCurrentState() = state.value
     fun setState(state: STATE) {
         viewModelScope.launch { _state.emit(state) }
     }

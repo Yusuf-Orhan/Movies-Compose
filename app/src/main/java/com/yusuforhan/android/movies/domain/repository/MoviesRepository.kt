@@ -6,5 +6,5 @@ import com.yusuforhan.android.movies.data.model.Movies
 
 interface MoviesRepository {
     suspend fun getMovies() : Resource<Movies>
-    suspend fun getMovieDetail(imdbId : Int) : Resource<MovieDetail>
+    suspend fun getMovieDetail(imdbId : String) : Resource<MovieDetail>
 }

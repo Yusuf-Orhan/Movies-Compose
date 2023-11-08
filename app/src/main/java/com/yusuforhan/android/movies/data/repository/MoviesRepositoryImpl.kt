@@ -18,7 +18,7 @@ class MoviesRepositoryImpl @Inject constructor(
             Resource.Error(e.message ?: "")
         }
 
-    override suspend fun getMovieDetail(imdbId: Int): Resource<MovieDetail> =
+    override suspend fun getMovieDetail(imdbId: String): Resource<MovieDetail> =
         try {
             Resource.Success(service.getMovieDetail(imdbId = imdbId))
         } catch (e: Exception) {

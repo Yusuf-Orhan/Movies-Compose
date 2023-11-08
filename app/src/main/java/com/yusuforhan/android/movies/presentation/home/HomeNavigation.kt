@@ -5,8 +5,10 @@ import androidx.navigation.compose.composable
 
 const val homeRoute = "home_route"
 
+
+
 fun NavGraphBuilder.homeScreen(
-    navigateToDetail: (Int) -> Unit
+    navigateToDetail: (String) -> Unit
 ) {
     composable(
         route = homeRoute
@@ -17,3 +19,4 @@ fun NavGraphBuilder.homeScreen(
     }
 
 }
+

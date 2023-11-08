@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -18,12 +17,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -36,12 +35,10 @@ import coil.compose.AsyncImage
 import com.yusuforhan.android.movies.R
 import com.yusuforhan.android.movies.data.model.Search
 import com.yusuforhan.android.movies.presentation.components.ECProgressBar
-import com.yusuforhan.android.movies.presentation.components.MovieItem
-import com.yusuforhan.android.movies.presentation.components.SearchBar
 
 @Composable
 fun HomeRoute(
-    navigateToDetail: (Int) -> Unit,
+    navigateToDetail: (String) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -62,14 +59,13 @@ fun HomeScreen(
     state: HomeUiState,
     effect: HomeEffects?,
     events: HomeEvents?,
-    onItemClick: (Int) -> Unit
+    onItemClick: (String) -> Unit
 ) {
     Column {
 
         ECProgressBar(state.isLoading)
         if (state.movies.isNotEmpty()) {
             Spacer(modifier = modifier.padding(16.dp))
-
             MovieList(movies = state.movies, onItemClick = onItemClick)
         }
 
@@ -90,32 +86,11 @@ fun HomeScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchView() {
-    val searchString = remember {
-        mutableStateOf("")
-    }
-    TextField(
-        value = searchString.value,
-        onValueChange = {
-            searchString.value = it
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(42.dp)
-            .padding(start = 24.dp, end = 24.dp, top = 20.dp),
-        colors = TextFieldDefaults.outlinedTextFieldColors(containerColor = colorResource(id = R.color.edittextBgColor))
-    )
-
-}
-
-
 @Composable
 fun MovieList(
     modifier: Modifier = Modifier,
     movies: List<Search>,
-    onItemClick: (Int) -> Unit
+    onItemClick: (String) -> Unit
 ) {
 
     LazyVerticalGrid(
@@ -123,41 +98,31 @@ fun MovieList(
     ) {
         items(movies) { movie ->
             MovieItem(imageUrl = movie.poster, modifier = modifier) {
-                onItemClick(movie.imdbID.toInt())
+                onItemClick(movie.imdbID)
             }
         }
     }
 }
 
-/*@Composable
+@Composable
 fun MovieItem(
-    modifier: Modifier = Modifier,
-    movie: Search,
-    onItemClick: (Int) -> Unit
+    imageUrl: String,
+    modifier: Modifier,
+    onclick: () -> Unit
 ) {
-    Column(
+
+    AsyncImage(
+        model =  imageUrl,
+        contentScale = ContentScale.Crop,
         modifier = modifier
-            .padding(8.dp)
-            .clip(shape = RoundedCornerShape(20.dp))
-            .clickable {
-                movie.imdbID
-                    .toIntOrNull()
-                    ?.let { onItemClick(it) }
-            }
-    ) {
-        Column(modifier = modifier) {
-            AsyncImage(
-                modifier = modifier
-                    .height(210.dp)
-                    .width(150.dp)
-                    .fillMaxSize(), model = movie.poster, contentDescription = null
-            )
-        }
-    }
+            .padding(10.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .clickable { onclick() },
+        contentDescription = "Movie banner",
+        filterQuality = FilterQuality.High
+    )
+
 }
-
- */
-
 @Composable
 fun ErrorScreen(
     modifier: Modifier = Modifier,

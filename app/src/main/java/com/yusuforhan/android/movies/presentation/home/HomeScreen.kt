@@ -42,14 +42,11 @@ fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val effect by viewModel.effect.collectAsStateWithLifecycle(initialValue = null)
-    val events by viewModel.event.collectAsStateWithLifecycle(initialValue = null)
     HomeScreen(
         Modifier,
         state,
-        effect,
-        events,
-        onItemClick = navigateToDetail
+        onItemClick = navigateToDetail,
+        handleEvents = viewModel::setEvent
     )
 }
 
@@ -57,9 +54,8 @@ fun HomeRoute(
 fun HomeScreen(
     modifier: Modifier = Modifier,
     state: HomeUiState,
-    effect: HomeEffects?,
-    events: HomeEvents?,
-    onItemClick: (String) -> Unit
+    onItemClick: (String) -> Unit,
+    handleEvents : (HomeEvents) -> Unit,
 ) {
     Column {
 
@@ -67,21 +63,13 @@ fun HomeScreen(
         if (state.movies.isNotEmpty()) {
             Spacer(modifier = modifier.padding(16.dp))
             MovieList(movies = state.movies, onItemClick = onItemClick)
-        }
-
-        when (effect) {
-            is HomeEffects.ShowError -> {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    ErrorScreen(errorMsg = effect.msg, tryButtonClick = {
-
-                    })
-                }
+        }else if (state.error != null){
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                ErrorScreen(errorMsg = state.error, tryButtonClick = {handleEvents(HomeEvents.TryAgainClicked)})
             }
-
-            else -> {}
         }
     }
 }

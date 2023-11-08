@@ -1,13 +1,10 @@
 package com.yusuforhan.android.movies.presentation.home
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yusuforhan.android.movies.common.Resource
-import com.yusuforhan.android.movies.data.model.Movies
 import com.yusuforhan.android.movies.data.model.Search
 import com.yusuforhan.android.movies.domain.repository.MoviesRepository
 import com.yusuforhan.android.movies.presentation.base.BaseViewModel
-import com.yusuforhan.android.movies.presentation.base.Effect
 import com.yusuforhan.android.movies.presentation.base.Event
 import com.yusuforhan.android.movies.presentation.base.State
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,11 +14,16 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val repository: MoviesRepository
-) : BaseViewModel<HomeUiState, HomeEffects, HomeEvents>() {
+) : BaseViewModel<HomeUiState, HomeEvents>() {
     override fun setInitialState(): HomeUiState = HomeUiState(true)
 
     override fun handleEvent(event: HomeEvents) {
-
+        when(event){
+            is HomeEvents.TryAgainClicked -> {
+                setState(getCurrentState().copy(true))
+                getMovies()
+            }
+        }
     }
 
     init {
@@ -34,8 +36,7 @@ class HomeViewModel @Inject constructor(
                 setState(HomeUiState(false,result.data.search))
             }
             is Resource.Error -> {
-                setState(HomeUiState(false))
-                setEffect(HomeEffects.ShowError(result.msg))
+                setState(HomeUiState(isLoading = false, error = result.msg))
             }
         }
     }
@@ -44,15 +45,12 @@ class HomeViewModel @Inject constructor(
 
 data class HomeUiState(
     val isLoading: Boolean = false,
-    val movies: List<Search> = emptyList()
+    val movies: List<Search> = emptyList(),
+    val error : String? = null
 ) : State
 
-sealed interface HomeEffects : Effect {
-    data class ShowError(val msg: String) : HomeEffects
-}
-
-sealed interface HomeEvents : Event {
-
+sealed class HomeEvents : Event {
+    data object TryAgainClicked : HomeEvents()
 }
 
 

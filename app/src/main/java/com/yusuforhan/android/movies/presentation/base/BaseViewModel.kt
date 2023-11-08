@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<STATE : State, EFFECT : Effect, EVENT : Event> : ViewModel() {
+abstract class BaseViewModel<STATE : State, EVENT : Event> : ViewModel() {
 
 
     private val initialState: STATE by lazy { setInitialState() }
@@ -23,8 +23,6 @@ abstract class BaseViewModel<STATE : State, EFFECT : Effect, EVENT : Event> : Vi
     private val _state: MutableStateFlow<STATE> = MutableStateFlow(initialState)
     val state: StateFlow<STATE> = _state.asStateFlow()
 
-    private val _effect: MutableSharedFlow<EFFECT> = MutableSharedFlow()
-    val effect: SharedFlow<EFFECT> = _effect.asSharedFlow()
 
     private val _event: MutableSharedFlow<EVENT> = MutableSharedFlow()
     val event: SharedFlow<EVENT> = _event.asSharedFlow()
@@ -46,15 +44,10 @@ abstract class BaseViewModel<STATE : State, EFFECT : Effect, EVENT : Event> : Vi
         viewModelScope.launch { _state.emit(state) }
     }
 
-    fun setEffect(effect: EFFECT) {
-        viewModelScope.launch { _effect.emit(effect) }
-    }
-
     fun setEvent(event: EVENT) {
         viewModelScope.launch { _event.emit(event) }
     }
 }
 
 interface State
-interface Effect
 interface Event

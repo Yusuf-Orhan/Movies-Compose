@@ -1,17 +1,13 @@
 package com.yusuforhan.android.movies.presentation.base
 
-import androidx.compose.animation.core.exponentialDecay
-import androidx.compose.ui.text.font.emptyCacheFontFamilyResolver
-import androidx.lifecycle.ViewModel
+/*import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 abstract class BaseViewModel<STATE : State, EVENT : Event> : ViewModel() {
@@ -46,6 +42,53 @@ abstract class BaseViewModel<STATE : State, EVENT : Event> : ViewModel() {
 
     fun setEvent(event: EVENT) {
         viewModelScope.launch { _event.emit(event) }
+    }
+}
+
+interface State
+interface Event
+
+ */
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.launch
+
+abstract class BaseViewModel<STATE : State, EVENT : Event> : ViewModel() {
+
+    private val initialState: STATE by lazy { setInitialState() }
+    abstract fun setInitialState(): STATE
+
+    private val _state: MutableState<STATE> = mutableStateOf(initialState)
+    val basestate: androidx.compose.runtime.State<STATE> get() = _state
+
+    private val _event: MutableState<EVENT?> = mutableStateOf(null)
+    val event: MutableState<EVENT?> get() = _event
+
+    abstract fun handleEvent(event: EVENT)
+
+    private fun subscribeToEvent() {
+        viewModelScope.launch {
+            _event.value?.let {
+                handleEvent(it)
+            }
+        }
+    }
+
+    init {
+        subscribeToEvent()
+    }
+
+    fun getCurrentState() = basestate.value
+
+    fun setState(newState: STATE) {
+        _state.value = newState
+    }
+
+    fun setEvent(newEvent: EVENT) {
+        _event.value = newEvent
     }
 }
 

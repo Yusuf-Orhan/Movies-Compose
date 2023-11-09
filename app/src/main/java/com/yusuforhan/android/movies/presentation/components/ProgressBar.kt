@@ -15,6 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.tooling.preview.Preview
+import com.yusuforhan.android.movies.R
 
 @Composable
 fun ECProgressBar(showState : Boolean) {
@@ -34,7 +37,7 @@ fun ECProgressBar(showState : Boolean) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = Color.White)
+                .background(color = colorResource(id = R.color.primaryColor))
                 .alpha(0.5f),
             contentAlignment = Alignment.Center
         ) {
@@ -42,9 +45,15 @@ fun ECProgressBar(showState : Boolean) {
                 progress = progressAnimationValue,
                 modifier = Modifier
                     .wrapContentSize(),
-                color = Color.Blue.copy(alpha = 0.8f)
+                color = Color.Red
             )
         }
     }
 
+}
+
+@Composable
+@Preview
+fun PreviewProgress(){
+    ECProgressBar(showState = true)
 }

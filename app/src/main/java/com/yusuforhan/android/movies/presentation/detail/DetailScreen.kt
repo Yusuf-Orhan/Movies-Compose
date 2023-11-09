@@ -1,38 +1,48 @@
 package com.yusuforhan.android.movies.presentation.detail
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 
 @Composable
 fun DetailRoute(
-    navigateBack : () -> Unit,
+    navigateBack: () -> Unit,
+    viewModel: DetailViewModel = hiltViewModel()
 ) {
-    DetailScreen()
+    val state by viewModel.state
+    DetailScreen(
+        state = state
+    )
 }
 
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen() {
-    Scaffold (
-        topBar =  {
-            CenterAlignedTopAppBar(title = {
-                Text(text = "Detail Movie")
-            })
+fun DetailScreen(
+    state: DetailUiState
+) {
+
+    Text(text = "Hello World")
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        if (state.movie != null) {
+            val movie = state.movie
+            AsyncImage(model = movie.Poster, contentDescription = null)
+        } else if (state.isError != null) {
+            Text(text = state.isError)
+
         }
-    ){
-        Column (horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center){
-            Text(text = "Detail Screen")
-        }
+
     }
+
 
 }

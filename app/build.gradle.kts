@@ -58,7 +58,7 @@ val lifecycleVersion = "2.6.2"
 val coilVersion = "2.5.0"
 val hiltVersion = "2.48.1"
 
-kapt{
+kapt {
     correctErrorTypes = true
 }
 dependencies {
@@ -81,7 +81,7 @@ dependencies {
 
     //Retrofit
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
-    implementation ("com.squareup.retrofit2:converter-gson:$retrofitVersion")
+    implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
 
     //Room
     implementation("androidx.room:room-runtime:$roomVersion")
@@ -100,10 +100,10 @@ dependencies {
     implementation("com.google.dagger:hilt-android:$hiltVersion")
     kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
-
-
     implementation("com.google.accompanist:accompanist-flowlayout:0.17.0")
+    //Swipe Refresh Layout
 
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.26.5-rc")
 
 
 }

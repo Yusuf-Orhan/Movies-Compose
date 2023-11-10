@@ -22,7 +22,7 @@ class DetailViewModel@Inject constructor(
 ) : BaseViewModel<DetailUiState, DetailEvents>() {
 
 
-    val state = mutableStateOf(DetailUiState())
+    val state = mutableStateOf(DetailUiState(isLoading = true))
 
     override fun setInitialState(): DetailUiState {
         return DetailUiState(true)

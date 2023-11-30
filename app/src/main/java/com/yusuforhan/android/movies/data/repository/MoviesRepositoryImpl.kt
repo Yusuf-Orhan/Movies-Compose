@@ -11,9 +11,9 @@ import javax.inject.Inject
 class MoviesRepositoryImpl @Inject constructor(
     private val service: MoviesApi
 ) : MoviesRepository {
-    override suspend fun getMovies(): Resource<Movies> =
+    override suspend fun getMovies(searchString: String): Resource<Movies> =
         try {
-            Resource.Success(service.getMovies())
+            Resource.Success(service.getMovies(searchString = searchString))
         } catch (e: Exception) {
             Resource.Error(e.message ?: "")
         }

@@ -11,7 +11,7 @@ interface MoviesApi {
     @GET(".")
     suspend fun getMovies(
         @Query("apikey") apiKey : String = API_KEY,
-        @Query("s") searchString: String = DEFAULT_SEARCH
+        @Query("s") searchString: String
     ) : Movies
     @GET(".")
     suspend fun getMovieDetail(

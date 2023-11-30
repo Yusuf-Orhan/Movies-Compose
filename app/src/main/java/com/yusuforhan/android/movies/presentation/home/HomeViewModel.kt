@@ -1,15 +1,12 @@
 package com.yusuforhan.android.movies.presentation.home
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yusuforhan.android.movies.common.Constants.DEFAULT_SEARCH
 import com.yusuforhan.android.movies.common.Resource
 import com.yusuforhan.android.movies.data.model.Search
 import com.yusuforhan.android.movies.domain.repository.MoviesRepository
-import com.yusuforhan.android.movies.presentation.base.BaseViewModel
-import com.yusuforhan.android.movies.presentation.base.Event
-import com.yusuforhan.android.movies.presentation.base.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,28 +14,28 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val repository: MoviesRepository
-) : BaseViewModel<HomeUiState, HomeEvents>() {
+)  : ViewModel(){
+    val state = mutableStateOf(HomeState(isLoading = true))
 
 
-    val state = mutableStateOf(HomeUiState(isLoading = true))
-
-    override fun setInitialState(): HomeUiState = HomeUiState(true)
-
-    override fun handleEvent(event: HomeEvents) {
-        when (event) {
-            is HomeEvents.TryAgainClicked -> {
-                setState(getCurrentState().copy(true))
-                getMovies()
+    fun onEvent(event : HomeUiEvents){
+        when(event){
+            is HomeUiEvents.TryAgainClicked -> {
+                state.value = state.value.copy(isLoading = true)
+                getMovies(DEFAULT_SEARCH)
+            }
+            is HomeUiEvents.OnSearch -> {
+                state.value = state.value.copy(isLoading = true)
+                getMovies(event.searchString)
             }
         }
     }
-
     init {
-        getMovies()
+        getMovies(DEFAULT_SEARCH)
     }
 
-    private fun getMovies() = viewModelScope.launch {
-        when (val result = repository.getMovies()) {
+    private fun getMovies(searchString: String?) = viewModelScope.launch {
+        when (val result = repository.getMovies(searchString ?: DEFAULT_SEARCH)) {
             is Resource.Success -> {
                 state.value = state.value.copy(isLoading = false, movies = result.data.search)
                 println("Success")
@@ -50,18 +47,14 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-
-
 }
-
-data class HomeUiState(
+data class HomeState(
     val isLoading: Boolean = false,
     val movies: List<Search>? = emptyList(),
     val error: String? = null
-) : State
+)
 
-sealed class HomeEvents : Event {
-    data object TryAgainClicked : HomeEvents()
+sealed class HomeUiEvents {
+    data object TryAgainClicked : HomeUiEvents()
+    data class OnSearch(val searchString: String) : HomeUiEvents()
 }
-
-

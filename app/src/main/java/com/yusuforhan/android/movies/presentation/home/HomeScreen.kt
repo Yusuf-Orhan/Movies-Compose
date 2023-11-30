@@ -54,27 +54,27 @@ fun HomeRoute(
         Modifier,
         state,
         onItemClick = navigateToDetail,
-        handleEvents = viewModel::setEvent
+        handleEvents = {
+            viewModel.onEvent(it)
+        }
     )
 }
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    state: HomeUiState,
+    state: HomeState,
     onItemClick: (String) -> Unit,
-    handleEvents : (HomeEvents) -> Unit,
+    handleEvents : (HomeUiEvents) -> Unit,
 ) {
 
     Column {
-        Spacer(modifier = modifier.size(8.dp))
-
+        Spacer(modifier = modifier.padding(10.dp))
+        MovieSearchBar {searchString ->
+            handleEvents(HomeUiEvents.OnSearch(searchString))
+        }
         ECProgressBar(state.isLoading)
         if (state.movies != null) {
-            Spacer(modifier = modifier.padding(16.dp))
-            MovieSearchBar {searchString ->
-                println(searchString)
-            }
             state.movies.let { MovieList(movies = it, onItemClick = onItemClick) }
 
         }else if (state.error != null){
@@ -82,10 +82,16 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ErrorScreen(errorMsg = state.error, tryButtonClick = {handleEvents(HomeEvents.TryAgainClicked)})
+                ErrorScreen(errorMsg = state.error, tryButtonClick = {handleEvents(HomeUiEvents.TryAgainClicked)})
             }
-        }else {
-            Text(text = "Boş Ekran", fontSize = 50.sp)
+        }else{
+            Column(
+                modifier = modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+               Text(text = "Movies Not Found", style = TextStyle(color = Color.White, fontSize = 22.sp))
+            }
         }
     }
 }

@@ -1,37 +1,28 @@
 package com.yusuforhan.android.movies.presentation.detail
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalMapOf
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.yusuforhan.android.movies.R
+import com.yusuforhan.android.movies.data.model.MovieDetail
 import com.yusuforhan.android.movies.presentation.components.ECProgressBar
 
 @Composable
@@ -44,7 +35,6 @@ fun DetailRoute(
         state = state
     )
 }
-
 
 @Composable
 fun DetailScreen(
@@ -66,56 +56,47 @@ fun DetailScreen(
                 contentScale = ContentScale.FillWidth,
                 contentDescription = null
             )
-            CustomIconButton(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(14.dp)
-                    .height(56.dp),
-                iconTint = Color.Red,
-                onButtonClicked = {
-
-                },
-                icon = Icons.Default.PlayArrow
-            )
+            DetailBody(movieDetail = movie)
 
         } else if (state.isError != null) {
             Text(text = state.isError)
-
         }
-
     }
-
 }
 
 @Composable
-fun CustomIconButton(
+fun DetailBody(
     modifier: Modifier = Modifier,
-    backgroundColor: Color = MaterialTheme.colorScheme.background,
-    iconTint: Color,
-    onButtonClicked: () -> Unit,
-    icon: ImageVector,
-    iconSize: Dp = 24.dp,
-    shape: Shape = MaterialTheme.shapes.medium,
-    elevation: Dp = 5.dp,
-    paddingValue: PaddingValues = PaddingValues(0.dp),
+    movieDetail: MovieDetail
 ) {
-    Box(
+    Column(
         modifier = modifier
-            .shadow(elevation = elevation, shape = shape)
-            .clip(shape)
-            .background(backgroundColor)
-            .clickable {
-                onButtonClicked()
-            }
-            .padding(paddingValues = paddingValue)
+            .fillMaxSize()
+            .padding(top = 10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Icon(
-            modifier = Modifier
-                .size(iconSize)
-                .align(Alignment.Center),
-            imageVector = icon,
-            contentDescription = "icon",
-            tint = iconTint
+        Text(text = movieDetail.Title, style = TextStyle(color = Color.White, fontSize = 20.sp))
+        Text(
+            text = "Release Date : ${movieDetail.Title}",
+            style = TextStyle(color = Color.White, fontSize = 20.sp)
         )
+        StarIcon(rating = "5.4")
     }
+}
+
+@Composable
+fun StarIcon(
+    modifier: Modifier = Modifier,
+    rating: String
+) {
+    Row {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_star_24),
+            contentDescription = null,
+            tint = Color.Yellow
+        )
+        Text(text = rating, style = TextStyle(color = Color.White))
+    }
+
+
 }

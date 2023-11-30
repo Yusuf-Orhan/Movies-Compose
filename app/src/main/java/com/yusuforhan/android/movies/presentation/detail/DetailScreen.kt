@@ -77,7 +77,7 @@ fun DetailBody(
     ) {
         Text(text = movieDetail.Title, style = TextStyle(color = Color.White, fontSize = 20.sp))
         Text(
-            text = "Release Date : ${movieDetail.Title}",
+            text = "Release Date : ${movieDetail.Released}",
             style = TextStyle(color = Color.White, fontSize = 20.sp)
         )
         StarIcon(rating = "5.4")
